@@ -1,14 +1,14 @@
-// import HotelDetailsComponent from "@/components/hotel-details";
-import Login from "./pages/Login";
-import Register from "./pages/Register";
+import HotelDetailsComponent from "@/components/hotel-details";
+import LoginPage from "./pages/Login";
+import RegisterPage from "./pages/Register";
 
 function App() {
   return (
     <>
-      <div className=" flex items-center justify-center h-full min-h-dvh">
+      <div className=" flex items-center justify-center h-full min-h-dvh w-full">
         {/* <HotelDetailsComponent></HotelDetailsComponent> */}
-        <Register/>
-        <Login/>
+        {/* <RegisterPage></RegisterPage> */}
+        <LoginPage></LoginPage>
       </div>
     </>
   );
