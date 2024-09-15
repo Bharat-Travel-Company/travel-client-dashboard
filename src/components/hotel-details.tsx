@@ -1,119 +1,164 @@
-import { useState, useCallback } from "react"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Textarea } from "@/components/ui/textarea"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { Slider } from "@/components/ui/slider"
-import { Checkbox } from "@/components/ui/checkbox"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Calendar } from "@/components/ui/calendar"
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
-import { cn } from "@/lib/utils"
-import { format } from "date-fns"
-import { Calendar as CalendarIcon, MapPin, Building, Bed, Coffee, Image, Plus, Minus, ChevronLeft, ChevronRight, Trash2, Upload, X } from "lucide-react"
-import { useDropzone } from "react-dropzone"
+import { useState, useCallback } from "react";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Slider } from "@/components/ui/slider";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Calendar } from "@/components/ui/calendar";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
+import { cn } from "@/lib/utils";
+import { format } from "date-fns";
+import {
+  Calendar as CalendarIcon,
+  MapPin,
+  Building,
+  Bed,
+  Coffee,
+  Image,
+  Plus,
+  Minus,
+  ChevronLeft,
+  ChevronRight,
+  Trash2,
+  Upload,
+  X,
+  Wifi,
+  Waves,
+  Dumbbell,
+  PawPrint,
+  Bus,
+  Paintbrush,
+} from "lucide-react";
+import { useDropzone } from "react-dropzone";
 
-const ROOM_TYPES = ["Single", "Double", "Twin", "Suite", "Deluxe", "Executive", "Family", "Accessible"]
+const ROOM_TYPES = [
+  "Single",
+  "Double",
+  "Twin",
+  "Suite",
+  "Deluxe",
+  "Executive",
+  "Family",
+  "Accessible",
+];
 
 const AMENITIES = [
-  { icon: <Coffee className="h-4 w-4" />, label: "Free Wi-Fi" },
+  { icon: <Wifi className="h-4 w-4" />, label: "Free Wi-Fi" },
   { icon: <MapPin className="h-4 w-4" />, label: "Parking" },
-  { icon: <Coffee className="h-4 w-4" />, label: "Swimming Pool" },
-  { icon: <Coffee className="h-4 w-4" />, label: "Fitness Center" },
+  { icon: <Waves className="h-4 w-4" />, label: "Swimming Pool" },
+  { icon: <Dumbbell className="h-4 w-4" />, label: "Fitness Center" },
   { icon: <Coffee className="h-4 w-4" />, label: "Restaurant" },
-  { icon: <Coffee className="h-4 w-4" />, label: "Room Service" },
+  { icon: <Paintbrush className="h-4 w-4" />, label: "Room Service" },
   { icon: <Coffee className="h-4 w-4" />, label: "Spa" },
   { icon: <Coffee className="h-4 w-4" />, label: "Business Center" },
-  { icon: <Coffee className="h-4 w-4" />, label: "Pet Friendly" },
-  { icon: <Coffee className="h-4 w-4" />, label: "Airport Shuttle" },
-]
+  { icon: <PawPrint className="h-4 w-4" />, label: "Pet Friendly" },
+  { icon: <Bus className="h-4 w-4" />, label: "Airport Shuttle" },
+];
 
 export default function HotelDetails() {
-  const [currentStep, setCurrentStep] = useState(0)
-  const [location, setLocation] = useState("")
-  const [locationSet, setLocationSet] = useState(false)
-  const [roomList, setRoomList] = useState([{ type: "", beds: "", size: "", rate: 500 }])
-  const [amenities, setAmenities] = useState({})
-  const [charges, setCharges] = useState({ adult: "", child: "" })
-  const [images, setImages] = useState([])
-  const [yearBuilt, setYearBuilt] = useState(new Date())
-  const [totalRooms, setTotalRooms] = useState("")
+  const [currentStep, setCurrentStep] = useState(0);
+  const [location, setLocation] = useState("");
+  const [locationSet, setLocationSet] = useState(false);
+  const [roomList, setRoomList] = useState([
+    { type: "", beds: "", size: "", rate: 500 },
+  ]);
+  const [amenities, setAmenities] = useState({});
+  const [charges, setCharges] = useState({ adult: "", child: "" });
+  const [images, setImages] = useState([]);
+  const [yearBuilt, setYearBuilt] = useState(new Date());
+  const [totalRooms, setTotalRooms] = useState("");
 
   const handleNext = () => {
     if (currentStep < 4) {
-      setCurrentStep(currentStep + 1)
+      setCurrentStep(currentStep + 1);
     }
-  }
+  };
 
   const handlePrevious = () => {
     if (currentStep > 0) {
-      setCurrentStep(currentStep - 1)
+      setCurrentStep(currentStep - 1);
     }
-  }
+  };
 
   const getCurrentLocation = () => {
     if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(
         (position) => {
-          const { latitude, longitude } = position.coords
-          setLocation(`${latitude}, ${longitude}`)
-          setLocationSet(true)
+          const { latitude, longitude } = position.coords;
+          setLocation(`${latitude}, ${longitude}`);
+          setLocationSet(true);
         },
         (error) => {
-          alert("Unable to retrieve your location. Please allow location access and try again.")
+          alert(
+            "Unable to retrieve your location. Please allow location access and try again."
+          );
         }
-      )
+      );
     } else {
-      alert("Geolocation is not supported by this browser.")
+      alert("Geolocation is not supported by this browser.");
     }
-  }
+  };
 
   const handleAddRoom = () => {
-    setRoomList([...roomList, { type: "", beds: "", size: "", rate: 500 }])
-  }
+    setRoomList([...roomList, { type: "", beds: "", size: "", rate: 500 }]);
+  };
 
   const handleRemoveRoom = (index) => {
-    const updatedRooms = roomList.filter((_, i) => i !== index)
-    setRoomList(updatedRooms)
-  }
+    const updatedRooms = roomList.filter((_, i) => i !== index);
+    setRoomList(updatedRooms);
+  };
 
   const handleRoomChange = (index, field, value) => {
     const updatedRooms = roomList.map((room, i) =>
       i === index ? { ...room, [field]: value } : room
-    )
-    setRoomList(updatedRooms)
-  }
+    );
+    setRoomList(updatedRooms);
+  };
 
   const handleAmenityChange = (amenity) => {
     setAmenities({
       ...amenities,
       [amenity]: !amenities[amenity],
-    })
-  }
+    });
+  };
 
   const handleChargeChange = (e) => {
     setCharges({
       ...charges,
       [e.target.name]: e.target.value,
-    })
-  }
+    });
+  };
 
   const onDrop = useCallback((acceptedFiles) => {
     setImages((prevImages) => [
       ...prevImages,
-      ...acceptedFiles.map((file) => Object.assign(file, { preview: URL.createObjectURL(file) })),
-    ])
-  }, [])
+      ...acceptedFiles.map((file) =>
+        Object.assign(file, { preview: URL.createObjectURL(file) })
+      ),
+    ]);
+  }, []);
 
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
     onDrop,
     accept: { "image/*": [] },
     multiple: true,
-  })
+  });
 
   const removeImage = (index) => {
-    setImages((prevImages) => prevImages.filter((_, i) => i !== index))
-  }
+    setImages((prevImages) => prevImages.filter((_, i) => i !== index));
+  };
 
   const steps = [
     { title: "Basic Info", icon: <Building className="h-5 w-5" /> },
@@ -121,10 +166,10 @@ export default function HotelDetails() {
     { title: "Rooms", icon: <Bed className="h-5 w-5" /> },
     { title: "Amenities", icon: <Coffee className="h-5 w-5" /> },
     { title: "Photos", icon: <Image className="h-5 w-5" /> },
-  ]
+  ];
 
   return (
-    <div className="container mx-auto py-10">
+    <div className="container mx-auto">
       <Card className="w-full max-w-4xl mx-auto">
         <CardHeader>
           <CardTitle>List Your Hotel</CardTitle>
@@ -135,13 +180,17 @@ export default function HotelDetails() {
               <div
                 key={index}
                 className={`flex flex-col items-center cursor-pointer ${
-                  currentStep === index ? "text-primary" : "text-muted-foreground"
+                  currentStep === index
+                    ? "text-primary"
+                    : "text-muted-foreground"
                 }`}
                 onClick={() => setCurrentStep(index)}
               >
                 <div
                   className={`w-10 h-10 rounded-full flex items-center justify-center ${
-                    currentStep === index ? "bg-primary text-primary-foreground" : "bg-muted"
+                    currentStep === index
+                      ? "bg-primary text-primary-foreground"
+                      : "bg-muted"
                   }`}
                 >
                   {step.icon}
@@ -161,15 +210,24 @@ export default function HotelDetails() {
                   </div>
                   <div className="space-y-2">
                     <label className="text-sm font-medium">Tagline</label>
-                    <Input type="text" placeholder="A short, catchy description" />
+                    <Input
+                      type="text"
+                      placeholder="A short, catchy description"
+                    />
                   </div>
                   <div className="space-y-2">
                     <label className="text-sm font-medium">Description</label>
-                    <Textarea placeholder="Describe your hotel's unique features and atmosphere" rows={4} />
+                    <Textarea
+                      placeholder="Describe your hotel's unique features and atmosphere"
+                      rows={4}
+                    />
                   </div>
                   <div className="space-y-2">
                     <label className="text-sm font-medium">Address</label>
-                    <Input type="text" placeholder="Full address of your hotel" />
+                    <Input
+                      type="text"
+                      placeholder="Full address of your hotel"
+                    />
                   </div>
                   <div className="space-y-2">
                     <label className="text-sm font-medium">Location</label>
@@ -179,10 +237,18 @@ export default function HotelDetails() {
                         value={location}
                         onClick={!locationSet ? getCurrentLocation : undefined}
                         readOnly={locationSet}
-                        placeholder={locationSet ? "Location set" : "Click to get current location"}
+                        placeholder={
+                          locationSet
+                            ? "Location set"
+                            : "Click to get current location"
+                        }
                       />
                       {!locationSet && (
-                        <Button type="button" onClick={getCurrentLocation} variant="outline">
+                        <Button
+                          type="button"
+                          onClick={getCurrentLocation}
+                          variant="outline"
+                        >
                           <MapPin className="h-4 w-4 mr-2" />
                           Get Location
                         </Button>
@@ -203,7 +269,15 @@ export default function HotelDetails() {
                         <SelectValue placeholder="Select Property Type" />
                       </SelectTrigger>
                       <SelectContent>
-                        {["Hotel", "Resort", "Boutique Hotel", "Apartment Hotel", "Villa", "Guesthouse", "Hostel"].map((type) => (
+                        {[
+                          "Hotel",
+                          "Resort",
+                          "Boutique Hotel",
+                          "Apartment Hotel",
+                          "Villa",
+                          "Guesthouse",
+                          "Hostel",
+                        ].map((type) => (
                           <SelectItem key={type} value={type.toLowerCase()}>
                             {type}
                           </SelectItem>
@@ -223,7 +297,11 @@ export default function HotelDetails() {
                           )}
                         >
                           <CalendarIcon className="mr-2 h-4 w-4" />
-                          {yearBuilt ? format(yearBuilt, "yyyy") : <span>Pick a year</span>}
+                          {yearBuilt ? (
+                            format(yearBuilt, "yyyy")
+                          ) : (
+                            <span>Pick a year</span>
+                          )}
                         </Button>
                       </PopoverTrigger>
                       <PopoverContent className="w-auto p-0">
@@ -240,7 +318,9 @@ export default function HotelDetails() {
                     </Popover>
                   </div>
                   <div className="space-y-2">
-                    <label className="text-sm font-medium">Number of Floors</label>
+                    <label className="text-sm font-medium">
+                      Number of Floors
+                    </label>
                     <Select>
                       <SelectTrigger>
                         <SelectValue placeholder="Select Number of Floors" />
@@ -261,11 +341,13 @@ export default function HotelDetails() {
                         <SelectValue placeholder="Select or enter total rooms" />
                       </SelectTrigger>
                       <SelectContent>
-                        {[10, 20, 30, 40, 50, 75, 100, 150, 200, "Custom"].map((rooms) => (
-                          <SelectItem key={rooms} value={rooms.toString()}>
-                            {rooms}
-                          </SelectItem>
-                        ))}
+                        {[10, 20, 30, 40, 50, 75, 100, 150, 200, "Custom"].map(
+                          (rooms) => (
+                            <SelectItem key={rooms} value={rooms.toString()}>
+                              {rooms}
+                            </SelectItem>
+                          )
+                        )}
                       </SelectContent>
                     </Select>
                     {totalRooms === "Custom" && (
@@ -288,8 +370,14 @@ export default function HotelDetails() {
                 {roomList.map((room, index) => (
                   <Card key={index} className="mb-4">
                     <CardHeader className="flex flex-row items-center justify-between">
-                      <CardTitle className="text-lg">Room {index + 1}</CardTitle>
-                      <Button variant="destructive" size="icon" onClick={() => handleRemoveRoom(index)}>
+                      <CardTitle className="text-lg">
+                        Room {index + 1}
+                      </CardTitle>
+                      <Button
+                        variant="destructive"
+                        size="icon"
+                        onClick={() => handleRemoveRoom(index)}
+                      >
                         <Trash2 className="h-4 w-4" />
                       </Button>
                     </CardHeader>
@@ -298,7 +386,9 @@ export default function HotelDetails() {
                         <label className="text-sm font-medium">Room Type</label>
                         <Select
                           value={room.type}
-                          onValueChange={(value) => handleRoomChange(index, "type", value)}
+                          onValueChange={(value) =>
+                            handleRoomChange(index, "type", value)
+                          }
                         >
                           <SelectTrigger>
                             <SelectValue placeholder="Select Room Type" />
@@ -313,10 +403,14 @@ export default function HotelDetails() {
                         </Select>
                       </div>
                       <div className="space-y-2">
-                        <label className="text-sm font-medium">Number of Beds</label>
+                        <label className="text-sm font-medium">
+                          Number of Beds
+                        </label>
                         <Select
                           value={room.beds}
-                          onValueChange={(value) => handleRoomChange(index, "beds", value)}
+                          onValueChange={(value) =>
+                            handleRoomChange(index, "beds", value)
+                          }
                         >
                           <SelectTrigger>
                             <SelectValue placeholder="Select Number of Beds" />
@@ -331,22 +425,30 @@ export default function HotelDetails() {
                         </Select>
                       </div>
                       <div className="space-y-2">
-                        <label className="text-sm font-medium">Room Size (sq ft)</label>
+                        <label className="text-sm font-medium">
+                          Room Size (sq ft)
+                        </label>
                         <Input
                           type="number"
                           value={room.size}
-                          onChange={(e) => handleRoomChange(index, "size", e.target.value)}
+                          onChange={(e) =>
+                            handleRoomChange(index, "size", e.target.value)
+                          }
                           placeholder="Enter room size"
                         />
                       </div>
                       <div className="space-y-2">
-                        <label className="text-sm font-medium">Room Rate (₹{room.rate})</label>
+                        <label className="text-sm font-medium">
+                          Room Rate (₹{room.rate})
+                        </label>
                         <Slider
                           min={500}
                           max={10000}
                           step={100}
                           value={[room.rate]}
-                          onValueChange={(value) => handleRoomChange(index, "rate", value[0])}
+                          onValueChange={(value) =>
+                            handleRoomChange(index, "rate", value[0])
+                          }
                         />
                       </div>
                     </CardContent>
@@ -366,11 +468,16 @@ export default function HotelDetails() {
                     <h3 className="text-lg font-medium mb-4">Amenities</h3>
                     <div className="grid grid-cols-2 gap-4">
                       {AMENITIES.map((amenity, index) => (
-                        <div key={index} className="flex items-center space-x-2">
+                        <div
+                          key={index}
+                          className="flex items-center space-x-2"
+                        >
                           <Checkbox
                             id={`amenity-${index}`}
                             checked={!!amenities[amenity.label]}
-                            onCheckedChange={() => handleAmenityChange(amenity.label)}
+                            onCheckedChange={() =>
+                              handleAmenityChange(amenity.label)
+                            }
                           />
                           <label
                             htmlFor={`amenity-${index}`}
@@ -386,10 +493,14 @@ export default function HotelDetails() {
                     </div>
                   </div>
                   <div>
-                    <h3 className="text-lg font-medium mb-4">Additional Charges</h3>
+                    <h3 className="text-lg font-medium mb-4">
+                      Additional Charges
+                    </h3>
                     <div className="grid grid-cols-2 gap-4">
                       <div className="space-y-2">
-                        <label className="text-sm font-medium">Extra Adult (per night)</label>
+                        <label className="text-sm font-medium">
+                          Extra Adult (per night)
+                        </label>
                         <Input
                           type="number"
                           name="adult"
@@ -399,7 +510,9 @@ export default function HotelDetails() {
                         />
                       </div>
                       <div className="space-y-2">
-                        <label className="text-sm font-medium">Extra Child (per night)</label>
+                        <label className="text-sm font-medium">
+                          Extra Child (per night)
+                        </label>
                         <Input
                           type="number"
                           name="child"
@@ -418,12 +531,16 @@ export default function HotelDetails() {
               <>
                 <div className="space-y-4">
                   <div className="space-y-2">
-                    <label className="text-sm font-medium">Upload Hotel Photos</label>
+                    <label className="text-sm font-medium">
+                      Upload Hotel Photos
+                    </label>
                     <div
                       {...getRootProps()}
                       className={cn(
                         "border-2 border-dashed rounded-lg p-8 text-center cursor-pointer transition-colors",
-                        isDragActive ? "border-primary" : "border-muted-foreground"
+                        isDragActive
+                          ? "border-primary"
+                          : "border-muted-foreground"
                       )}
                     >
                       <input {...getInputProps()} />
@@ -431,14 +548,20 @@ export default function HotelDetails() {
                       {isDragActive ? (
                         <p>Drop the files here ...</p>
                       ) : (
-                        <p>Drag 'n' drop some files here, or click to select files</p>
+                        <p>
+                          Drag 'n' drop some files here, or click to select
+                          files
+                        </p>
                       )}
                     </div>
                   </div>
                   {images.length > 0 && (
                     <div className="grid grid-cols-3 gap-4 mt-4">
                       {images.map((file, index) => (
-                        <div key={index} className="relative aspect-video bg-muted rounded-md overflow-hidden group">
+                        <div
+                          key={index}
+                          className="relative aspect-video bg-muted rounded-md overflow-hidden group"
+                        >
                           <img
                             src={file.preview}
                             alt={`Hotel Image ${index + 1}`}
@@ -457,19 +580,29 @@ export default function HotelDetails() {
                     </div>
                   )}
                   <p className="text-sm text-muted-foreground">
-                    Upload high-quality images of your hotel's exterior, rooms, amenities, and common areas.
-                    These photos will be displayed on your listing page.
+                    Upload high-quality images of your hotel's exterior, rooms,
+                    amenities, and common areas. These photos will be displayed
+                    on your listing page.
                   </p>
                 </div>
               </>
             )}
 
             <div className="flex justify-between mt-8">
-              <Button type="button" onClick={handlePrevious} disabled={currentStep === 0} variant="outline">
+              <Button
+                type="button"
+                onClick={handlePrevious}
+                disabled={currentStep === 0}
+                variant="outline"
+              >
                 <ChevronLeft className="h-4 w-4 mr-2" />
                 Previous
               </Button>
-              <Button type="button" onClick={handleNext} disabled={currentStep === 4}>
+              <Button
+                type="button"
+                onClick={handleNext}
+                disabled={currentStep === 4}
+              >
                 {currentStep === 4 ? "Submit Listing" : "Next"}
                 <ChevronRight className="h-4 w-4 ml-2" />
               </Button>
@@ -478,5 +611,5 @@ export default function HotelDetails() {
         </CardContent>
       </Card>
     </div>
-  )
+  );
 }
