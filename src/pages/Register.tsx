@@ -3,6 +3,8 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
+import { useNavigate } from "react-router-dom";
+
 import {
   Select,
   SelectContent,
@@ -39,6 +41,7 @@ export default function RegisterPage() {
     accountType: "",
   });
   const { toast } = useToast();
+  const navigate = useNavigate();
 
   const handleChange = (e: ChangeEvent<HTMLInputElement>): void => {
     const { name, value } = e.target;
@@ -176,6 +179,7 @@ export default function RegisterPage() {
             <Button
               variant="link"
               className="p-0 h-auto font-normal text-blue-600 hover:underline"
+              onClick={() => navigate("/login")}
             >
               Login here
             </Button>

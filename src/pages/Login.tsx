@@ -145,6 +145,7 @@ export default function LoginPage() {
             <Button
               variant="link"
               className="p-0 h-auto font-normal text-blue-600 hover:underline"
+              onClick={() => navigate("/register")}
             >
               Register here
             </Button>
