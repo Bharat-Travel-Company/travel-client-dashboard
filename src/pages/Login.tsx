@@ -24,7 +24,7 @@ interface LoginData {
 export default function LoginPage() {
   const [isLoading, setIsLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  // const [error, setError] = useState<string | null>(null);
   const [data, setData] = useState<LoginData>({
     email: "",
     password: "",
@@ -43,15 +43,15 @@ export default function LoginPage() {
   const handleLogin = async (): Promise<void> => {
     const { email, password } = data;
     if (!email || !password) {
-      setError("Please fill all fields");
+      alert("Please fill all fields");
       return;
     }
 
     setIsLoading(true);
-    setError(null);
+    // setError(null);
 
     try {
-      const res = await axios.post(
+        await axios.post(
         `https://travel-backend-nwtf.onrender.com/api/v1/tourist/login`,
         data
       );
@@ -64,8 +64,9 @@ export default function LoginPage() {
         navigate("/hotel-details");
       }, 300);
     } catch (error) {
-      setError(error);
-      console.error("Error during login", error);
+      // setError(error);
+      console.error(error)
+      alert("Error during login");
     } finally {
       setIsLoading(false);
     }

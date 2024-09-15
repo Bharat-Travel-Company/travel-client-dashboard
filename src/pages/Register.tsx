@@ -5,13 +5,13 @@ import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
 import { useNavigate } from "react-router-dom";
 
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
+// import {
+//   Select,
+//   SelectContent,
+//   SelectItem,
+//   SelectTrigger,
+//   SelectValue,
+// } from "@/components/ui/select";
 import {
   Card,
   CardContent,
@@ -24,21 +24,21 @@ import { Eye, EyeOff, Loader2 } from "lucide-react";
 import axios from "axios";
 
 interface RegisterData {
-  name: string;
+  fullName: string;
   email: string;
   password: string;
-  accountType: string;
+  role: string;
 }
 
 export default function RegisterPage() {
   const [isLoading, setIsLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  // const [error, setError] = useState<string | null>(null);
   const [data, setData] = useState<RegisterData>({
-    name: "",
+    fullName: "",
     email: "",
     password: "",
-    accountType: "",
+    role: "Admin",
   });
   const { toast } = useToast();
   const navigate = useNavigate();
@@ -51,22 +51,22 @@ export default function RegisterPage() {
     });
   };
 
-  const handleAccountTypeChange = (value: string): void => {
-    setData({
-      ...data,
-      accountType: value,
-    });
-  };
+  // const handleAccountTypeChange = (value: string): void => {
+  //   setData({
+  //     ...data,
+  //     role: value,
+  //   });
+  // };
 
   const handleRegister = async (): Promise<void> => {
-    const { name, email, password, accountType } = data;
-    if (!name || !email || !password || !accountType) {
-      setError("Please fill all fields");
+    const { fullName, email, password } = data;
+    if (!fullName || !email || !password) {
+      alert("Please fill all fields");
       return;
     }
 
     setIsLoading(true);
-    setError(null);
+    // setError(null);
 
     try {
       const res = await axios.post(
@@ -75,17 +75,18 @@ export default function RegisterPage() {
       );
 
       if (res.data.message === "Tourist registered successfully") {
+        navigate("/login")
         toast({
           title: "Registration Successful",
           description: "You have successfully registered.",
           variant: "default",
         });
       } else {
-        setError(res.data.message);
+        alert(res.data.message);
       }
     } catch (error) {
       console.error("Error during registration", error);
-      setError("An error occurred during registration");
+      alert("An error occurred during registration");
     } finally {
       setIsLoading(false);
     }
@@ -107,7 +108,7 @@ export default function RegisterPage() {
             <Label htmlFor="name">Full Name</Label>
             <Input
               id="name"
-              name="name"
+              name="fullName"
               type="text"
               placeholder="your name"
               required
@@ -153,7 +154,7 @@ export default function RegisterPage() {
           </div>
           <div className="space-y-2">
             <Label htmlFor="accountType">Account Type</Label>
-            <Select onValueChange={handleAccountTypeChange} required>
+            {/* <Select onValueChange={handleAccountTypeChange} required>
               <SelectTrigger id="accountType">
                 <SelectValue placeholder="Select account type" />
               </SelectTrigger>
@@ -162,7 +163,8 @@ export default function RegisterPage() {
                 <SelectItem value="activities">List Activities</SelectItem>
                 <SelectItem value="cars">Car Services</SelectItem>
               </SelectContent>
-            </Select>
+            </Select> */}
+            <Input value='Admin' readOnly/>
           </div>
         </CardContent>
         <CardFooter className="flex flex-col space-y-4">

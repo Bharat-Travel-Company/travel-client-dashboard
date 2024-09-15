@@ -7,7 +7,7 @@ import {
 import HotelDetailsComponent from "@/components/hotel-details";
 import LoginPage from "./pages/Login";
 import RegisterPage from "./pages/Register";
-import ForgotPasswordPage from "./components/forgot-password";
+import { ForgotPasswordPage } from "./components/forgot-password";
 
 function App() {
   return (
