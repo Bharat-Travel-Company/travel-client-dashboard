@@ -130,6 +130,7 @@ export default function LoginPage() {
             <Button
               variant="link"
               className="p-0 h-auto font-normal text-sm text-blue-600 hover:underline"
+              onClick={() => navigate("/forgot-password")}
             >
               Forgot password?
             </Button>
