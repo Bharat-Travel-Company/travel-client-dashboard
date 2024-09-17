@@ -75,7 +75,7 @@ export default function RegisterPage() {
       );
 
       if (res.data.message === "Tourist registered successfully") {
-        navigate("/login")
+        navigate("/login");
         toast({
           title: "Registration Successful",
           description: "You have successfully registered.",
@@ -164,7 +164,7 @@ export default function RegisterPage() {
                 <SelectItem value="cars">Car Services</SelectItem>
               </SelectContent>
             </Select> */}
-            <Input value='Admin' readOnly/>
+            <Input value="Admin" readOnly />
           </div>
         </CardContent>
         <CardFooter className="flex flex-col space-y-4">

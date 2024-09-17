@@ -28,7 +28,6 @@ import {
   Coffee,
   Image,
   Plus,
-  Minus,
   ChevronLeft,
   ChevronRight,
   Trash2,
@@ -67,6 +66,9 @@ const AMENITIES = [
   { icon: <Bus className="h-4 w-4" />, label: "Airport Shuttle" },
 ];
 
+interface ImageFile extends File {
+  preview: string;
+}
 export default function HotelDetails() {
   const [currentStep, setCurrentStep] = useState(0);
   const [location, setLocation] = useState("");
@@ -74,11 +76,11 @@ export default function HotelDetails() {
   const [roomList, setRoomList] = useState([
     { type: "", beds: "", size: "", rate: 500 },
   ]);
-  const [amenities, setAmenities] = useState({});
   const [charges, setCharges] = useState({ adult: "", child: "" });
-  const [images, setImages] = useState([]);
   const [yearBuilt, setYearBuilt] = useState(new Date());
   const [totalRooms, setTotalRooms] = useState("");
+  const [images, setImages] = useState<ImageFile[]>([]);
+  const [amenities, setAmenities] = useState<Record<string, boolean>>({});
 
   const handleNext = () => {
     if (currentStep < 4) {
@@ -101,6 +103,7 @@ export default function HotelDetails() {
           setLocationSet(true);
         },
         (error) => {
+          console.log(error);
           alert(
             "Unable to retrieve your location. Please allow location access and try again."
           );
@@ -115,37 +118,40 @@ export default function HotelDetails() {
     setRoomList([...roomList, { type: "", beds: "", size: "", rate: 500 }]);
   };
 
-  const handleRemoveRoom = (index) => {
+  const handleRemoveRoom = (index: number) => {
     const updatedRooms = roomList.filter((_, i) => i !== index);
     setRoomList(updatedRooms);
   };
 
-  const handleRoomChange = (index, field, value) => {
+  const handleRoomChange = (index: number, field: string, value: any) => {
     const updatedRooms = roomList.map((room, i) =>
       i === index ? { ...room, [field]: value } : room
     );
     setRoomList(updatedRooms);
   };
 
-  const handleAmenityChange = (amenity) => {
-    setAmenities({
-      ...amenities,
-      [amenity]: !amenities[amenity],
-    });
+  const handleAmenityChange = (amenity: string) => {
+    setAmenities((currentAmenities) => ({
+      ...currentAmenities,
+      [amenity]: !currentAmenities[amenity],
+    }));
   };
 
-  const handleChargeChange = (e) => {
+  const handleChargeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setCharges({
       ...charges,
       [e.target.name]: e.target.value,
     });
   };
 
-  const onDrop = useCallback((acceptedFiles) => {
-    setImages((prevImages) => [
+  const onDrop = useCallback((acceptedFiles: File[]) => {
+    setImages((prevImages: ImageFile[]) => [
       ...prevImages,
-      ...acceptedFiles.map((file) =>
-        Object.assign(file, { preview: URL.createObjectURL(file) })
+      ...acceptedFiles.map(
+        (file) =>
+          Object.assign(file, {
+            preview: URL.createObjectURL(file),
+          }) as ImageFile
       ),
     ]);
   }, []);
@@ -156,7 +162,7 @@ export default function HotelDetails() {
     multiple: true,
   });
 
-  const removeImage = (index) => {
+  const removeImage = (index: number) => {
     setImages((prevImages) => prevImages.filter((_, i) => i !== index));
   };
 
@@ -167,7 +173,9 @@ export default function HotelDetails() {
     { title: "Amenities", icon: <Coffee className="h-5 w-5" /> },
     { title: "Photos", icon: <Image className="h-5 w-5" /> },
   ];
-
+  const handleYearBuiltSelect = (day: Date |undefined) => {
+    if (day) setYearBuilt(day);
+  };
   return (
     <div className="container mx-auto">
       <Card className="w-full max-w-4xl mx-auto">
@@ -308,7 +316,7 @@ export default function HotelDetails() {
                         <Calendar
                           mode="single"
                           selected={yearBuilt}
-                          onSelect={setYearBuilt}
+                          onSelect={handleYearBuiltSelect}
                           initialFocus
                           disabled={(date) =>
                             date > new Date() || date < new Date("1800-01-01")

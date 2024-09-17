@@ -24,8 +24,8 @@ export function ForgotPasswordPage() {
     setIsLoading(true);
     setError(null);
 
-    const formData = new FormData(event.currentTarget);
-    const email = formData.get("email") as string;
+    // const formData = new FormData(event.currentTarget);
+    // const email = formData.get("email") as string;
 
     try {
       // Simulate API call
@@ -39,7 +39,8 @@ export function ForgotPasswordPage() {
         duration: 5000,
       });
     } catch (err) {
-      setError("An unexpected error occurred. Please try again.");
+      console.log(err);
+      setError("An unexpected error occurred. Please try again. -> ");
     } finally {
       setIsLoading(false);
     }

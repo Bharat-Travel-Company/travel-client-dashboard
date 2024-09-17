@@ -62,7 +62,7 @@ export default function LoginPage() {
       });
       setInterval(() => {
         navigate("/hotel-details");
-      }, 300);
+      }, 1000);
     } catch (error) {
       // setError(error);
       console.error(error)
