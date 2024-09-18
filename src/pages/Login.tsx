@@ -51,7 +51,7 @@ export default function LoginPage() {
     // setError(null);
 
     try {
-        await axios.post(
+      await axios.post(
         `https://travel-backend-nwtf.onrender.com/api/v1/tourist/login`,
         data
       );
@@ -60,12 +60,10 @@ export default function LoginPage() {
         description: "You have successfully logged in.",
         variant: "default",
       });
-      setInterval(() => {
-        navigate("/hotel-details");
-      }, 1000);
+      navigate("/hotel-details");
     } catch (error) {
       // setError(error);
-      console.error(error)
+      console.error(error);
       alert("Error during login");
     } finally {
       setIsLoading(false);

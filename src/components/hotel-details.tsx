@@ -12,16 +12,10 @@ import {
 import { Slider } from "@/components/ui/slider";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Calendar } from "@/components/ui/calendar";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
 import { cn } from "@/lib/utils";
 import { format } from "date-fns";
+import { useEffect } from "react";
 import {
-  Calendar as CalendarIcon,
   MapPin,
   Building,
   Bed,
@@ -69,6 +63,7 @@ const AMENITIES = [
 interface ImageFile extends File {
   preview: string;
 }
+
 export default function HotelDetails() {
   const [currentStep, setCurrentStep] = useState(0);
   const [location, setLocation] = useState("");
@@ -77,7 +72,7 @@ export default function HotelDetails() {
     { type: "", beds: "", size: "", rate: 500 },
   ]);
   const [charges, setCharges] = useState({ adult: "", child: "" });
-  const [yearBuilt, setYearBuilt] = useState(new Date());
+  const [yearBuilt, setYearBuilt] = useState<Date | null>(null);
   const [totalRooms, setTotalRooms] = useState("");
   const [images, setImages] = useState<ImageFile[]>([]);
   const [amenities, setAmenities] = useState<Record<string, boolean>>({});
@@ -143,17 +138,34 @@ export default function HotelDetails() {
       [e.target.name]: e.target.value,
     });
   };
-
   const onDrop = useCallback((acceptedFiles: File[]) => {
-    setImages((prevImages: ImageFile[]) => [
-      ...prevImages,
-      ...acceptedFiles.map(
-        (file) =>
-          Object.assign(file, {
-            preview: URL.createObjectURL(file),
-          }) as ImageFile
-      ),
-    ]);
+    setImages((prevImages: ImageFile[]) => {
+      const newImages = [
+        ...prevImages,
+        ...acceptedFiles.map(
+          (file) =>
+            Object.assign(file, {
+              preview: URL.createObjectURL(file),
+            }) as ImageFile
+        ),
+      ];
+      localStorage.setItem("hotelImages", JSON.stringify(newImages));
+      return newImages;
+    });
+  }, []);
+
+  useEffect(() => {
+    const storedImages = localStorage.getItem("hotelImages");
+    if (storedImages) {
+      const parsedImages = JSON.parse(storedImages);
+      setImages(
+        parsedImages.map((img: any) =>
+          Object.assign(new File([], img.name), {
+            preview: img.preview,
+          })
+        )
+      );
+    }
   }, []);
 
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
@@ -163,7 +175,16 @@ export default function HotelDetails() {
   });
 
   const removeImage = (index: number) => {
-    setImages((prevImages) => prevImages.filter((_, i) => i !== index));
+    setImages((prevImages) => {
+      const updatedImages = prevImages.filter((_, i) => i !== index);
+      localStorage.setItem("hotelImages", JSON.stringify(updatedImages));
+      return updatedImages;
+    });
+  };
+
+  const handleYearChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const date = new Date(e.target.value);
+    setYearBuilt(date);
   };
 
   const steps = [
@@ -173,9 +194,7 @@ export default function HotelDetails() {
     { title: "Amenities", icon: <Coffee className="h-5 w-5" /> },
     { title: "Photos", icon: <Image className="h-5 w-5" /> },
   ];
-  const handleYearBuiltSelect = (day: Date |undefined) => {
-    if (day) setYearBuilt(day);
-  };
+
   return (
     <div className="container mx-auto">
       <Card className="w-full max-w-4xl mx-auto">
@@ -295,36 +314,14 @@ export default function HotelDetails() {
                   </div>
                   <div className="space-y-2">
                     <label className="text-sm font-medium">Year Built</label>
-                    <Popover>
-                      <PopoverTrigger asChild>
-                        <Button
-                          variant={"outline"}
-                          className={cn(
-                            "w-full justify-start text-left font-normal",
-                            !yearBuilt && "text-muted-foreground"
-                          )}
-                        >
-                          <CalendarIcon className="mr-2 h-4 w-4" />
-                          {yearBuilt ? (
-                            format(yearBuilt, "yyyy")
-                          ) : (
-                            <span>Pick a year</span>
-                          )}
-                        </Button>
-                      </PopoverTrigger>
-                      <PopoverContent className="w-auto p-0">
-                        <Calendar
-                          mode="single"
-                          selected={yearBuilt}
-                          onSelect={handleYearBuiltSelect}
-                          initialFocus
-                          disabled={(date) =>
-                            date > new Date() || date < new Date("1800-01-01")
-                          }
-                        />
-                      </PopoverContent>
-                    </Popover>
+                    <Input
+                      type="date"
+                      value={yearBuilt ? format(yearBuilt, "yyyy-MM-dd") : ""}
+                      onChange={handleYearChange}
+                      max={format(new Date(), "yyyy-MM-dd")}
+                    />
                   </div>
+
                   <div className="space-y-2">
                     <label className="text-sm font-medium">
                       Number of Floors
@@ -567,19 +564,22 @@ export default function HotelDetails() {
                     <div className="grid grid-cols-3 gap-4 mt-4">
                       {images.map((file, index) => (
                         <div
-                          key={index}
-                          className="relative aspect-video bg-muted rounded-md overflow-hidden group"
+                          key={file.preview}
+                          className="relative aspect-square bg-muted rounded-md overflow-hidden group"
                         >
                           <img
                             src={file.preview}
                             alt={`Hotel Image ${index + 1}`}
-                            className="object-cover w-full h-full"
+                            className=" object-fill w-full h-full"
                           />
                           <Button
                             variant="destructive"
                             size="icon"
                             className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity"
-                            onClick={() => removeImage(index)}
+                            onClick={(e) => {
+                              e.preventDefault();
+                              removeImage(index);
+                            }}
                           >
                             <X className="h-4 w-4" />
                           </Button>
@@ -587,6 +587,7 @@ export default function HotelDetails() {
                       ))}
                     </div>
                   )}
+
                   <p className="text-sm text-muted-foreground">
                     Upload high-quality images of your hotel's exterior, rooms,
                     amenities, and common areas. These photos will be displayed

@@ -69,24 +69,23 @@ export default function RegisterPage() {
     // setError(null);
 
     try {
-      const res = await axios.post(
+      await axios.post(
         `https://travel-backend-nwtf.onrender.com/api/v1/tourist/register`,
         data
       );
-
-      if (res.data.message === "Tourist registered successfully") {
-        navigate("/login");
-        toast({
-          title: "Registration Successful",
-          description: "You have successfully registered.",
-          variant: "default",
-        });
-      } else {
-        alert(res.data.message);
-      }
-    } catch (error) {
-      console.error("Error during registration", error);
-      alert("An error occurred during registration");
+      navigate("/hotel-details");
+      toast({
+        title: "Registration Successful",
+        description: "You have successfully registered.",
+        variant: "default",
+      });
+    } catch (err) {
+      console.error("Error during registration", err);
+      toast({
+        title: "Registration Failed",
+        description: "An error occurred during registration",
+        variant: "destructive",
+      });
     } finally {
       setIsLoading(false);
     }
