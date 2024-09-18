@@ -5,13 +5,13 @@ import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
 import { useNavigate } from "react-router-dom";
 
-// import {
-//   Select,
-//   SelectContent,
-//   SelectItem,
-//   SelectTrigger,
-//   SelectValue,
-// } from "@/components/ui/select";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import {
   Card,
   CardContent,
@@ -38,7 +38,7 @@ export default function RegisterPage() {
     fullName: "",
     email: "",
     password: "",
-    role: "Admin",
+    role: "",
   });
   const { toast } = useToast();
   const navigate = useNavigate();
@@ -51,16 +51,16 @@ export default function RegisterPage() {
     });
   };
 
-  // const handleAccountTypeChange = (value: string): void => {
-  //   setData({
-  //     ...data,
-  //     role: value,
-  //   });
-  // };
+  const handleAccountTypeChange = (value: string): void => {
+    setData({
+      ...data,
+      role: value,
+    });
+  };
 
   const handleRegister = async (): Promise<void> => {
-    const { fullName, email, password } = data;
-    if (!fullName || !email || !password) {
+    const { fullName, email, password, role } = data;
+    if (!fullName || !email || !password || !role) {
       alert("Please fill all fields");
       return;
     }
@@ -153,17 +153,17 @@ export default function RegisterPage() {
           </div>
           <div className="space-y-2">
             <Label htmlFor="accountType">Account Type</Label>
-            {/* <Select onValueChange={handleAccountTypeChange} required>
+           <Select onValueChange={handleAccountTypeChange} required>
               <SelectTrigger id="accountType">
                 <SelectValue placeholder="Select account type" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="hotels">Hotels</SelectItem>
-                <SelectItem value="activities">List Activities</SelectItem>
-                <SelectItem value="cars">Car Services</SelectItem>
+                <SelectItem value="Accomodation">Hotels</SelectItem>
+                <SelectItem value="Activities">Activity</SelectItem>
+                <SelectItem value="Transport">Transport</SelectItem>
               </SelectContent>
-            </Select> */}
-            <Input value="Admin" readOnly />
+            </Select> 
+         
           </div>
         </CardContent>
         <CardFooter className="flex flex-col space-y-4">
