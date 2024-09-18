@@ -69,11 +69,18 @@ export default function RegisterPage() {
     // setError(null);
 
     try {
-      await axios.post(
+      const res = await axios.post(
         `https://travel-backend-nwtf.onrender.com/api/v1/tourist/register`,
         data
       );
-      navigate("/hotel-details");
+      console.log(res);
+      localStorage.setItem("role",data.role);
+      if(data.role === "Accomodation"){
+        navigate("/hotel-details");
+      }
+      // else if(data.role === "Hotel"){
+      //   navigate("/hotel-details");
+      // }
       toast({
         title: "Registration Successful",
         description: "You have successfully registered.",
@@ -153,17 +160,16 @@ export default function RegisterPage() {
           </div>
           <div className="space-y-2">
             <Label htmlFor="accountType">Account Type</Label>
-           <Select onValueChange={handleAccountTypeChange} required>
+            <Select onValueChange={handleAccountTypeChange} required>
               <SelectTrigger id="accountType">
                 <SelectValue placeholder="Select account type" />
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="Accomodation">Hotels</SelectItem>
-                <SelectItem value="Activities">Activity</SelectItem>
+                <SelectItem value="Activities">Activities</SelectItem>
                 <SelectItem value="Transport">Transport</SelectItem>
               </SelectContent>
-            </Select> 
-         
+            </Select>
           </div>
         </CardContent>
         <CardFooter className="flex flex-col space-y-4">

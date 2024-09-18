@@ -10,6 +10,7 @@ import RegisterPage from "./pages/Register";
 import { ForgotPasswordPage } from "./components/forgot-password";
 
 function App() {
+  // const role = localStorage.getItem("role");
   return (
     <Router>
       <div className="flex items-center justify-center h-full min-h-dvh w-full">
