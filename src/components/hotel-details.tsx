@@ -196,9 +196,9 @@ export default function HotelDetails() {
   ];
 
   return (
-    <div className="container mx-auto">
-      <Card className="w-full max-w-4xl mx-auto">
-        <CardHeader>
+    <div className="container mx-auto flex">
+      <Card className="w-full  mx-auto h-full border-none shadow-none flex flex-col justify-start">
+        <CardHeader className="pt-0">
           <CardTitle>List Your Hotel</CardTitle>
         </CardHeader>
         <CardContent>
