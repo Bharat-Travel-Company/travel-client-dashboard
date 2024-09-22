@@ -59,6 +59,18 @@ const AMENITIES = [
   { icon: <PawPrint className="h-4 w-4" />, label: "Pet Friendly" },
   { icon: <Bus className="h-4 w-4" />, label: "Airport Shuttle" },
 ];
+const SERVICES = [
+  { icon: <Wifi className="h-4 w-4" />, label: "Free Wi-Fi" },
+  { icon: <MapPin className="h-4 w-4" />, label: "Parking" },
+  { icon: <Waves className="h-4 w-4" />, label: "Swimming Pool" },
+  { icon: <Dumbbell className="h-4 w-4" />, label: "Fitness Center" },
+  { icon: <Coffee className="h-4 w-4" />, label: "Restaurant" },
+  { icon: <Paintbrush className="h-4 w-4" />, label: "Room Service" },
+  { icon: <Coffee className="h-4 w-4" />, label: "Spa" },
+  { icon: <Coffee className="h-4 w-4" />, label: "Business Center" },
+  { icon: <PawPrint className="h-4 w-4" />, label: "Pet Friendly" },
+  { icon: <Bus className="h-4 w-4" />, label: "Airport Shuttle" },
+];
 
 interface ImageFile extends File {
   preview: string;
@@ -194,9 +206,15 @@ export default function HotelDetails() {
     { title: "Pricing and Packages", icon: <Coffee className="h-5 w-5" /> },
     { title: "Images", icon: <Image className="h-5 w-5" /> },
     { title: "Safety and Security", icon: <Image className="h-5 w-5" /> },
-    { title: "Cancellation and Refund Policy ", icon: <Image className="h-5 w-5" /> },
+    {
+      title: "Cancellation and Refund Policy ",
+      icon: <Image className="h-5 w-5" />,
+    },
     { title: "Additional Services", icon: <Image className="h-5 w-5" /> },
-    { title: "Documents and Certifications", icon: <Image className="h-5 w-5" /> },
+    {
+      title: "Documents and Certifications",
+      icon: <Image className="h-5 w-5" />,
+    },
   ];
 
   return (
@@ -236,64 +254,6 @@ export default function HotelDetails() {
               <>
                 <div className="space-y-4">
                   <div className="space-y-2">
-                    <label className="text-sm font-medium">Hotel Name</label>
-                    <Input type="text" placeholder="Enter your hotel's name" />
-                  </div>
-                  <div className="space-y-2">
-                    <label className="text-sm font-medium">Tagline</label>
-                    <Input
-                      type="text"
-                      placeholder="A short, catchy description"
-                    />
-                  </div>
-                  <div className="space-y-2">
-                    <label className="text-sm font-medium">Description</label>
-                    <Textarea
-                      placeholder="Describe your hotel's unique features and atmosphere"
-                      rows={4}
-                    />
-                  </div>
-                  <div className="space-y-2">
-                    <label className="text-sm font-medium">Address</label>
-                    <Input
-                      type="text"
-                      placeholder="Full address of your hotel"
-                    />
-                  </div>
-                  <div className="space-y-2">
-                    <label className="text-sm font-medium">Location</label>
-                    <div className="flex items-center space-x-2">
-                      <Input
-                        type="text"
-                        value={location}
-                        onClick={!locationSet ? getCurrentLocation : undefined}
-                        readOnly={locationSet}
-                        placeholder={
-                          locationSet
-                            ? "Location set"
-                            : "Click to get current location"
-                        }
-                      />
-                      {!locationSet && (
-                        <Button
-                          type="button"
-                          onClick={getCurrentLocation}
-                          variant="outline"
-                        >
-                          <MapPin className="h-4 w-4 mr-2" />
-                          Get Location
-                        </Button>
-                      )}
-                    </div>
-                  </div>
-                </div>
-              </>
-            )}
-
-            {currentStep === 1 && (
-              <>
-                <div className="space-y-4">
-                  <div className="space-y-2">
                     <label className="text-sm font-medium">Property Type</label>
                     <Select>
                       <SelectTrigger>
@@ -315,6 +275,53 @@ export default function HotelDetails() {
                         ))}
                       </SelectContent>
                     </Select>
+                  </div>
+                  <div className="space-y-2">
+                    <label className="text-sm font-medium">Hotel Name</label>
+                    <Input type="text" placeholder="Enter your hotel's name" />
+                  </div>
+                  <div className="space-y-2">
+                    <label className="text-sm font-medium">Address</label>
+                    <Input
+                      type="search"
+                      placeholder="Full address of your hotel"
+                    />
+                  </div>
+                  
+                  <div className="space-y-2">
+                    <label className="text-sm font-medium">Email</label>
+                    <Input
+                      type="email"
+                      placeholder="Email address of your hotel"
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <label className="text-sm font-medium">Phone Number</label>
+                    <Input
+                      type="text"
+                      placeholder="Phone number of your hotel"
+                    />
+                  </div>
+                </div>
+              </>
+            )}
+
+            {currentStep === 1 && (
+              <>
+                <div className="space-y-4">
+                  <div className="space-y-2">
+                    <label className="text-sm font-medium">Tagline</label>
+                    <Input
+                      type="text"
+                      placeholder="A short, catchy description"
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <label className="text-sm font-medium">Description</label>
+                    <Textarea
+                      placeholder="Describe your hotel's unique features and atmosphere"
+                      rows={4}
+                    />
                   </div>
                   <div className="space-y-2">
                     <label className="text-sm font-medium">Year Built</label>
@@ -369,6 +376,62 @@ export default function HotelDetails() {
                         onChange={(e) => setTotalRooms(e.target.value)}
                       />
                     )}
+                  </div>
+                  <div>
+                    <h3 className="text-lg font-medium mb-4">Amenities</h3>
+                    <div className="grid grid-cols-2 gap-4">
+                      {AMENITIES.map((amenity, index) => (
+                        <div
+                          key={index}
+                          className="flex items-center space-x-2"
+                        >
+                          <Checkbox
+                            id={`amenity-${index}`}
+                            checked={!!amenities[amenity.label]}
+                            onCheckedChange={() =>
+                              handleAmenityChange(amenity.label)
+                            }
+                          />
+                          <label
+                            htmlFor={`amenity-${index}`}
+                            className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                          >
+                            <div className="flex items-center space-x-2">
+                              {amenity.icon}
+                              <span>{amenity.label}</span>
+                            </div>
+                          </label>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                  <div>
+                    <h3 className="text-lg font-medium mb-4">Services Provided</h3>
+                    <div className="grid grid-cols-2 gap-4">
+                      {SERVICES.map((services, index) => (
+                        <div
+                          key={index}
+                          className="flex items-center space-x-2"
+                        >
+                          <Checkbox
+                            id={`services-${index}`}
+                            checked={!!amenities[services.label]}
+                            onCheckedChange={() =>
+                              handleAmenityChange(services.label)
+                            }
+                          />
+                          <label
+                            htmlFor={`services-${index}`}
+                            className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                          >
+                            <div className="flex items-center space-x-2">
+                              {services.icon}
+                              <span>{services.label}</span>
+                            </div>
+                          </label>
+                        </div>
+                      ))}
+                    </div>
                   </div>
                 </div>
               </>
@@ -473,34 +536,7 @@ export default function HotelDetails() {
             {currentStep === 3 && (
               <>
                 <div className="space-y-6">
-                  <div>
-                    <h3 className="text-lg font-medium mb-4">Amenities</h3>
-                    <div className="grid grid-cols-2 gap-4">
-                      {AMENITIES.map((amenity, index) => (
-                        <div
-                          key={index}
-                          className="flex items-center space-x-2"
-                        >
-                          <Checkbox
-                            id={`amenity-${index}`}
-                            checked={!!amenities[amenity.label]}
-                            onCheckedChange={() =>
-                              handleAmenityChange(amenity.label)
-                            }
-                          />
-                          <label
-                            htmlFor={`amenity-${index}`}
-                            className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
-                          >
-                            <div className="flex items-center space-x-2">
-                              {amenity.icon}
-                              <span>{amenity.label}</span>
-                            </div>
-                          </label>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
+                 
                   <div>
                     <h3 className="text-lg font-medium mb-4">
                       Additional Charges
