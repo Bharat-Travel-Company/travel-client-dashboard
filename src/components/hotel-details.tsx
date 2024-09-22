@@ -188,11 +188,15 @@ export default function HotelDetails() {
   };
 
   const steps = [
-    { title: "Basic Info", icon: <Building className="h-5 w-5" /> },
-    { title: "Property Details", icon: <MapPin className="h-5 w-5" /> },
-    { title: "Rooms", icon: <Bed className="h-5 w-5" /> },
-    { title: "Amenities", icon: <Coffee className="h-5 w-5" /> },
-    { title: "Photos", icon: <Image className="h-5 w-5" /> },
+    { title: "Property Details ", icon: <Building className="h-5 w-5" /> },
+    { title: "Property Description ", icon: <MapPin className="h-5 w-5" /> },
+    { title: "Room Details", icon: <Bed className="h-5 w-5" /> },
+    { title: "Pricing and Packages", icon: <Coffee className="h-5 w-5" /> },
+    { title: "Images", icon: <Image className="h-5 w-5" /> },
+    { title: "Safety and Security", icon: <Image className="h-5 w-5" /> },
+    { title: "Cancellation and Refund Policy ", icon: <Image className="h-5 w-5" /> },
+    { title: "Additional Services", icon: <Image className="h-5 w-5" /> },
+    { title: "Documents and Certifications", icon: <Image className="h-5 w-5" /> },
   ];
 
   return (
