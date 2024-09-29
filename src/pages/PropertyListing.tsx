@@ -8,11 +8,13 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { Skeleton } from "@/components/ui/skeleton";
 
 import { PropertyDetails } from "@/components/propertyListing/PropertyDetails";
 import { Amenities } from "@/components/propertyListing/Amenities";
 import { RoomListing } from "@/components/propertyListing/RoomListing";
 import { PropertyImages } from "@/components/propertyListing/PropertyImages";
+import { Documents } from "@/components/propertyListing/Documents";
 interface TabItem {
   icon: JSX.Element;
   label: string;
@@ -207,6 +209,18 @@ type PropertyImages = {
   images: ImageFile[];
 };
 
+interface MergedData {
+  propertyName?: string;
+  propertyType?: string;
+  country?: string;
+  state?: string;
+  city?: string;
+  amenities?: Record<string, unknown>;
+  roomDetails?: Record<string, unknown>;
+  propertyImages?: PropertyImages;
+  documentDetails?: Record<string, unknown>;
+}
+
 const PropertyListing = () => {
   const [activeTab, setActiveTab] = useState(0);
   const [propertyDetailsData, setPropertyDetailsData] = useState<
@@ -217,15 +231,48 @@ const PropertyListing = () => {
   const [propertyImages, setPropertyImages] = useState<PropertyImages>({
     images: [],
   });
+  const [documentDetails, setDocumentDetails] = useState({});
+  const [mergedData, setMergedData] = useState<MergedData>({});
+  const [isSubmitted, setIsSubmitted] = useState(false);
 
-  const handleSubmit = () => {
-    console.log("Form submitted", propertyDetailsData, amenities, roomDetails);
-    setActiveTab((prevTab) => prevTab + 1);
+  useEffect(() => {
+    const newMergedData = {
+      ...propertyDetailsData,
+      amenities,
+      roomDetails,
+      propertyImages,
+      documentDetails,
+    };
+    setMergedData(newMergedData);
+  }, [
+    propertyDetailsData,
+    amenities,
+    roomDetails,
+    propertyImages,
+    documentDetails,
+  ]);
+
+  const handleNext = () => {
+    if (activeTab < tabItems.length - 1) {
+      setActiveTab((prevTab) => prevTab + 1);
+    } else {
+      // Submit the form data
+      console.log("Form submitted", mergedData);
+      // Here you would typically send the data to your backend API
+      // For example: await api.submitPropertyListing(mergedData);
+      setIsSubmitted(true);
+    }
+  };
+
+  const handlePrevious = () => {
+    if (activeTab > 0) {
+      setActiveTab((prevTab) => prevTab - 1);
+    }
   };
 
   useEffect(() => {
-    console.log(propertyImages.images);
-  }, [propertyImages]);
+    console.log(propertyDetailsData);
+  }, [propertyDetailsData]);
 
   return (
     <div className="h-full p-4 flex flex-row gap-4">
@@ -238,27 +285,45 @@ const PropertyListing = () => {
             <CardDescription>{tabItems[activeTab].subheading}</CardDescription>
           </CardHeader>
           <CardContent>
-            {(() => {
-              switch (activeTab) {
-                case 0:
-                  return (
-                    <PropertyDetails setFormData={setPropertyDetailsData} />
-                  );
-                case 1:
-                  return <Amenities setFormData={setAmenities} />;
-                case 2:
-                  return <RoomListing setFormData={setRoomDetails} />;
-                case 3:
-                  return <PropertyImages setFormData={setPropertyImages} />;
-
-                default:
-                  return null;
-              }
-            })()}
+            {isSubmitted ? (
+              <div className="text-center">
+                <h2 className="text-2xl font-bold text-green-600 mb-4">
+                  Submission Successful!
+                </h2>
+                <p>Your property listing has been submitted successfully.</p>
+              </div>
+            ) : (
+              (() => {
+                switch (activeTab) {
+                  case 0:
+                    return (
+                      <PropertyDetails setFormData={setPropertyDetailsData} />
+                    );
+                  case 1:
+                    return <Amenities setFormData={setAmenities} />;
+                  case 2:
+                    return <RoomListing setFormData={setRoomDetails} />;
+                  case 3:
+                    return <PropertyImages setFormData={setPropertyImages} />;
+                  case 4:
+                    return <Documents setFormData={setDocumentDetails} />;
+                  default:
+                    return null;
+                }
+              })()
+            )}
           </CardContent>
 
           <CardFooter className="flex justify-between">
-            <Button onClick={handleSubmit}>Next</Button>
+            <Button
+              onClick={handlePrevious}
+              disabled={activeTab === 0 || isSubmitted}
+            >
+              Previous
+            </Button>
+            <Button onClick={handleNext} disabled={isSubmitted}>
+              {activeTab === tabItems.length - 1 ? "Submit" : "Next"}
+            </Button>
           </CardFooter>
         </Card>
       </section>
@@ -271,6 +336,31 @@ const PropertyListing = () => {
             <PropertyImagesSlider
               propertyImages={propertyImages}
             ></PropertyImagesSlider>
+            <div className="my-2.5">
+              {mergedData.propertyName && activeTab > 0 ? (
+                <div className=" capitalize text-lg">
+                  {mergedData.propertyName}
+                </div>
+              ) : (
+                <Skeleton className="h-2.5 w-[250px] my-4 " />
+              )}
+            </div>
+            <div className="flex justify-between my-2">
+              <div>
+                {mergedData.propertyType && activeTab > 0 ? (
+                  <div className=" capitalize">{mergedData.propertyType}</div>
+                ) : (
+                  <Skeleton className="h-2.5 w-24  " />
+                )}
+              </div>
+              <div>
+                {mergedData.country && activeTab > 0 ? (
+                  <div className=" capitalize">{`${mergedData.country},${mergedData.state},${mergedData.city}`}</div>
+                ) : (
+                  <Skeleton className="h-2.5 w-24 " />
+                )}
+              </div>
+            </div>
           </CardContent>
         </Card>
       </section>
