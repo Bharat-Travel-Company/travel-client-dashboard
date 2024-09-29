@@ -1,5 +1,4 @@
-import { useState } from "react";
-
+import { useState, useEffect, useRef } from "react";
 import {
   Card,
   CardContent,
@@ -12,6 +11,8 @@ import { Button } from "@/components/ui/button";
 
 import { PropertyDetails } from "@/components/propertyListing/PropertyDetails";
 import { Amenities } from "@/components/propertyListing/Amenities";
+import { RoomListing } from "@/components/propertyListing/RoomListing";
+import { PropertyImages } from "@/components/propertyListing/PropertyImages";
 interface TabItem {
   icon: JSX.Element;
   label: string;
@@ -75,20 +76,7 @@ const tabItems: TabItem[] = [
     label: "Property Images",
     subheading: "Visual tour of the property",
   },
-  {
-    icon: (
-      <svg
-        xmlns="http://www.w3.org/2000/svg"
-        viewBox="0 -960 960 960"
-        fill="currentColor"
-        className="w-5 h-5"
-      >
-        <path d="m701-360-87-50 140-104 86 50-139 104ZM512-482l104-79-276-159-60 104 232 134Zm-64-119ZM160-160v-80h200v-238l-120-69q-29-17-37.5-48.5T211-656l60-104q17-29 48.5-37.5T380-789l381 220-244 182-77-44v191q0 33-23.5 56.5T360-160H160Z" />
-      </svg>
-    ),
-    label: "Safety and Security",
-    subheading: "Measures for resident protection",
-  },
+
   {
     icon: (
       <svg
@@ -131,19 +119,116 @@ const SliderNavBar = ({ activeTab, setActiveTab }: SliderNavBarProps) => {
     </div>
   );
 };
+type PropertyImagesSliderProps = {
+  propertyImages: { images: { preview: string; name: string }[] };
+};
+export const PropertyImagesSlider = ({
+  propertyImages,
+}: PropertyImagesSliderProps) => {
+  const [scrollDirection, setScrollDirection] = useState("right");
+  const scrollContainerRef = useRef<HTMLDivElement>(null);
 
-const PropertyListing = () => {
-  const [activeTab, setActiveTab] = useState(0);
-  const [propertyDetailsData, setPropertyDetailsData] = useState({});
-  const [amenities, setAmenities] = useState({});
+  const handleScroll = () => {
+    if (scrollContainerRef.current) {
+      const container = scrollContainerRef.current;
+      const scrollAmount = 224; // size-56 (224px) + gap (8px)
 
-  const handleSubmit = () => {
-    console.log("Form submitted", propertyDetailsData, amenities);
-    setActiveTab((prevTab) => prevTab + 1);
+      if (scrollDirection === "right") {
+        container.scrollLeft += scrollAmount;
+        if (
+          container.scrollLeft + container.clientWidth >=
+          container.scrollWidth
+        ) {
+          setScrollDirection("left");
+        }
+      } else {
+        container.scrollLeft -= scrollAmount;
+        if (container.scrollLeft <= 0) {
+          setScrollDirection("right");
+        }
+      }
+    }
   };
 
   return (
-    <div className="h-full p-4">
+    <div className="relative">
+      {propertyImages?.images?.length > 0 ? (
+        <div
+          ref={scrollContainerRef}
+          className="flex w-full overflow-x-scroll max-w-96 gap-2 no-scrollbar"
+        >
+          {propertyImages.images.map((image, index) => (
+            <div
+              key={index}
+              className="aspect-square bg-secondary rounded-lg size-56 flex-shrink-0"
+            >
+              <img
+                src={image.preview}
+                alt={image.name}
+                className="aspect-square bg-secondary rounded-lg size-56 object-cover"
+              />
+            </div>
+          ))}
+        </div>
+      ) : (
+        <div className="flex w-full overflow-x-scroll max-w-96 gap-2 no-scrollbar">
+          {[...Array(5)].map((_, index) => (
+            <div
+              key={index}
+              className="aspect-square bg-secondary rounded-lg size-56 flex-shrink-0"
+            ></div>
+          ))}
+        </div>
+      )}
+      <button
+        className="absolute -right-2 z-40 top-1/2 -translate-y-1/2 bg-white shadow-md rounded-full"
+        onClick={handleScroll}
+      >
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          height="24px"
+          viewBox="0 -960 960 960"
+          width="24px"
+          className={`text-primary transform ${
+            scrollDirection === "left" ? "rotate-180" : ""
+          }`}
+        >
+          <path d="M504-480 320-664l56-56 240 240-240 240-56-56 184-184Z" />
+        </svg>
+      </button>
+    </div>
+  );
+};
+interface ImageFile extends File {
+  preview: string;
+}
+
+type PropertyImages = {
+  images: ImageFile[];
+};
+
+const PropertyListing = () => {
+  const [activeTab, setActiveTab] = useState(0);
+  const [propertyDetailsData, setPropertyDetailsData] = useState<
+    Record<string, unknown>
+  >({});
+  const [amenities, setAmenities] = useState({});
+  const [roomDetails, setRoomDetails] = useState({});
+  const [propertyImages, setPropertyImages] = useState<PropertyImages>({
+    images: [],
+  });
+
+  const handleSubmit = () => {
+    console.log("Form submitted", propertyDetailsData, amenities, roomDetails);
+    setActiveTab((prevTab) => prevTab + 1);
+  };
+
+  useEffect(() => {
+    console.log(propertyImages.images);
+  }, [propertyImages]);
+
+  return (
+    <div className="h-full p-4 flex flex-row gap-4">
       <section className="">
         <Card className="mx-auto h-full">
           <CardHeader>
@@ -161,6 +246,11 @@ const PropertyListing = () => {
                   );
                 case 1:
                   return <Amenities setFormData={setAmenities} />;
+                case 2:
+                  return <RoomListing setFormData={setRoomDetails} />;
+                case 3:
+                  return <PropertyImages setFormData={setPropertyImages} />;
+
                 default:
                   return null;
               }
@@ -173,7 +263,16 @@ const PropertyListing = () => {
         </Card>
       </section>
       <section>
-        {/* You can add more property listings or other content here */}
+        <Card>
+          <CardHeader>
+            <h1 className="text-xl">Preview </h1>
+          </CardHeader>
+          <CardContent>
+            <PropertyImagesSlider
+              propertyImages={propertyImages}
+            ></PropertyImagesSlider>
+          </CardContent>
+        </Card>
       </section>
     </div>
   );
