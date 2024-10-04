@@ -1,4 +1,4 @@
-interface TabItem {
+export interface TabItem {
   icon: JSX.Element;
   label: string;
   subheading: string;

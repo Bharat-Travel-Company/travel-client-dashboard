@@ -1,4 +1,11 @@
-import { useState, useEffect, useRef, lazy, Suspense } from "react";
+import {
+  useState,
+  useEffect,
+  useRef,
+  lazy,
+  Suspense,
+  useCallback,
+} from "react";
 import {
   Card,
   CardContent,
@@ -10,15 +17,34 @@ import {
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 
-import { SliderNavBar } from "@/components/propertyListing/SliderNavBar";
+import { SliderNavBar } from "@/components/SliderNavBar";
 import { tabItems } from "@/data/propertyListing/tabItems";
 
-const PropertyDetails = lazy(() => import("@/components/propertyListing/PropertyDetails").then(module => ({ default: module.PropertyDetails })));
-const Amenities = lazy(() => import("@/components/propertyListing/Amenities").then(module => ({ default: module.Amenities })));
-const RoomListing = lazy(() => import("@/components/propertyListing/RoomListing").then(module => ({ default: module.RoomListing })));
-const PropertyImages = lazy(() => import("@/components/propertyListing/PropertyImages").then(module => ({ default: module.PropertyImages })));
-const Documents = lazy(() => import("@/components/propertyListing/Documents").then(module => ({ default: module.Documents })));
-
+const PropertyDetails = lazy(() =>
+  import("@/components/propertyListing/PropertyDetails").then((module) => ({
+    default: module.PropertyDetails,
+  }))
+);
+const Amenities = lazy(() =>
+  import("@/components/propertyListing/Amenities").then((module) => ({
+    default: module.Amenities,
+  }))
+);
+const RoomListing = lazy(() =>
+  import("@/components/propertyListing/RoomListing").then((module) => ({
+    default: module.RoomListing,
+  }))
+);
+const PropertyImages = lazy(() =>
+  import("@/components/propertyListing/PropertyImages").then((module) => ({
+    default: module.PropertyImages,
+  }))
+);
+const Documents = lazy(() =>
+  import("@/components/propertyListing/Documents").then((module) => ({
+    default: module.Documents,
+  }))
+);
 
 type PropertyImagesSliderProps = {
   propertyImages: { images: { preview: string; name: string }[] };
@@ -119,7 +145,6 @@ interface MergedData {
   propertyImages?: PropertyImages;
   documentDetails?: Record<string, unknown>;
 }
-
 const PropertyListing = () => {
   const [activeTab, setActiveTab] = useState(0);
   const [propertyDetailsData, setPropertyDetailsData] = useState<
@@ -134,15 +159,15 @@ const PropertyListing = () => {
   const [mergedData, setMergedData] = useState<MergedData>({});
   const [isSubmitted, setIsSubmitted] = useState(false);
 
-  useEffect(() => {
-    const newMergedData = {
+  const updateMergedData = useCallback(() => {
+    setMergedData((prevData) => ({
+      ...prevData,
       ...propertyDetailsData,
       amenities,
       roomDetails,
       propertyImages,
       documentDetails,
-    };
-    setMergedData(newMergedData);
+    }));
   }, [
     propertyDetailsData,
     amenities,
@@ -151,14 +176,15 @@ const PropertyListing = () => {
     documentDetails,
   ]);
 
+  useEffect(() => {
+    updateMergedData();
+  }, [updateMergedData]);
+
   const handleNext = () => {
     if (activeTab < tabItems.length - 1) {
       setActiveTab((prevTab) => prevTab + 1);
     } else {
-      // Submit the form data
       console.log("Form submitted", mergedData);
-      // Here you would typically send the data to your backend API
-      // For example: await api.submitPropertyListing(mergedData);
       setIsSubmitted(true);
     }
   };
@@ -169,17 +195,17 @@ const PropertyListing = () => {
     }
   };
 
-  // useEffect(() => {
-  //   console.log(propertyDetailsData);
-  // }, [propertyDetailsData]);
-
   return (
     <div className="h-full p-4 flex flex-row gap-4">
       <section className="">
         <Card className="mx-auto h-full">
           <CardHeader>
             <CardTitle>
-              <SliderNavBar activeTab={activeTab} setActiveTab={setActiveTab} />
+              <SliderNavBar
+                activeTab={activeTab}
+                setActiveTab={setActiveTab}
+                tabItems={tabItems}
+              />
             </CardTitle>
             <CardDescription>{tabItems[activeTab].subheading}</CardDescription>
           </CardHeader>
@@ -192,7 +218,13 @@ const PropertyListing = () => {
                 <p>Your property listing has been submitted successfully.</p>
               </div>
             ) : (
-              <Suspense fallback={<div>Loading...</div>}>
+              <Suspense
+                fallback={
+                  <Card>
+                    <Skeleton className="w-full h-full min-h-96"></Skeleton>
+                  </Card>
+                }
+              >
                 {(() => {
                   switch (activeTab) {
                     case 0:
@@ -214,7 +246,6 @@ const PropertyListing = () => {
               </Suspense>
             )}
           </CardContent>
-
           <CardFooter className="flex justify-between">
             <Button
               onClick={handlePrevious}
@@ -234,31 +265,29 @@ const PropertyListing = () => {
             <h1 className="text-xl">Preview </h1>
           </CardHeader>
           <CardContent>
-            <PropertyImagesSlider
-              propertyImages={propertyImages}
-            ></PropertyImagesSlider>
+            <PropertyImagesSlider propertyImages={propertyImages} />
             <div className="my-2.5">
               {mergedData.propertyName && activeTab > 0 ? (
-                <div className=" capitalize text-lg">
+                <div className="capitalize text-lg">
                   {mergedData.propertyName}
                 </div>
               ) : (
-                <Skeleton className="h-2.5 w-[250px] my-4 " />
+                <Skeleton className="h-2.5 w-[250px] my-4" />
               )}
             </div>
             <div className="flex justify-between my-2">
               <div>
                 {mergedData.propertyType && activeTab > 0 ? (
-                  <div className=" capitalize">{mergedData.propertyType}</div>
+                  <div className="capitalize">{mergedData.propertyType}</div>
                 ) : (
-                  <Skeleton className="h-2.5 w-24  " />
+                  <Skeleton className="h-2.5 w-24" />
                 )}
               </div>
               <div>
                 {mergedData.country && activeTab > 0 ? (
-                  <div className=" capitalize">{`${mergedData.country},${mergedData.state},${mergedData.city}`}</div>
+                  <div className="capitalize">{`${mergedData.country},${mergedData.state},${mergedData.city}`}</div>
                 ) : (
-                  <Skeleton className="h-2.5 w-24 " />
+                  <Skeleton className="h-2.5 w-24" />
                 )}
               </div>
             </div>

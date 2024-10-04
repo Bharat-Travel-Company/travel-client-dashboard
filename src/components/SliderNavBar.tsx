@@ -1,15 +1,23 @@
 import { Button } from "@/components/ui/button";
-import {tabItems} from "@/data/propertyListing/tabItems"
+
+interface TabItem {
+  icon: JSX.Element;
+  label: string;
+  subheading: string;
+}
+
 type SliderNavBarProps = {
   activeTab: number;
   setActiveTab: (index: number) => void;
+  tabItems: TabItem[];
 };
 export const SliderNavBar = ({
   activeTab,
   setActiveTab,
+  tabItems,
 }: SliderNavBarProps) => {
   return (
-    <div className="w-full">
+    <div className="w-full flex flex-col">
       <div className="flex gap-x-2 overflow-x-auto">
         {tabItems.map((item, index) => (
           <Button
@@ -26,6 +34,7 @@ export const SliderNavBar = ({
           </Button>
         ))}
       </div>
+      <p>{tabItems[activeTab].label}</p>
     </div>
   );
 };
