@@ -15,7 +15,7 @@ import {
 } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
-
+import axios from "axios";
 import { SliderNavBar } from "@/components/SliderNavBar";
 import { tabItems } from "@/data/propertyListing/tabItems";
 
@@ -179,14 +179,33 @@ const PropertyListing = () => {
     updateMergedData();
   }, [updateMergedData]);
 
-  const handleNext = () => {
+  const handleNext = async () => {
     if (activeTab < tabItems.length - 1) {
       setActiveTab((prevTab) => prevTab + 1);
     } else {
-      console.log("Form submitted", mergedData);
-      setIsSubmitted(true);
+      try {
+        
+        console.log("Form submitted", mergedData);
+  
+        
+        const response = await axios.post(
+          "https://travel-backend-nwtf.onrender.com/api/v1/property/property-create",
+          mergedData, 
+          {
+            headers: {
+              "Content-Type": "application/json", 
+            },
+          }
+        );
+  
+        
+        console.log("Property submitted successfully:", response.data);
+        setIsSubmitted(true);
+      } catch (error) {
+        console.error("There was an error submitting the property:", error);
+        alert("An error occurred while submitting the property. Please try again.");
     }
-  };
+  }};
 
   const handlePrevious = () => {
     if (activeTab > 0) {
@@ -194,9 +213,10 @@ const PropertyListing = () => {
     }
   };
 
-  // useEffect(() => {
-  //   console.log(mergedData);
-  // }, [mergedData]);
+  useEffect(() => {
+    console.log(mergedData);
+  }, [mergedData]);
+
 
   return (
     <div className="h-full p-4 flex flex-row gap-4">
@@ -329,6 +349,6 @@ const PropertyListing = () => {
       </section>
     </div>
   );
-};
+;}
 
 export default PropertyListing;
