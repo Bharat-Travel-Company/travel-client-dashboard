@@ -9,7 +9,6 @@ import {
 import {
   Card,
   CardContent,
-  CardDescription,
   CardFooter,
   CardHeader,
   CardTitle,
@@ -82,7 +81,7 @@ export const PropertyImagesSlider = ({
       {propertyImages?.images?.length > 0 ? (
         <div
           ref={scrollContainerRef}
-          className="flex w-full overflow-x-scroll max-w-96 gap-2 no-scrollbar"
+          className="flex w-full overflow-x-scroll  gap-2 no-scrollbar "
         >
           {propertyImages.images.map((image, index) => (
             <div
@@ -195,6 +194,10 @@ const PropertyListing = () => {
     }
   };
 
+  // useEffect(() => {
+  //   console.log(mergedData);
+  // }, [mergedData]);
+
   return (
     <div className="h-full p-4 flex flex-row gap-4">
       <section className="">
@@ -207,7 +210,6 @@ const PropertyListing = () => {
                 tabItems={tabItems}
               />
             </CardTitle>
-            <CardDescription>{tabItems[activeTab].subheading}</CardDescription>
           </CardHeader>
           <CardContent>
             {isSubmitted ? (
@@ -289,6 +291,37 @@ const PropertyListing = () => {
                 ) : (
                   <Skeleton className="h-2.5 w-24" />
                 )}
+              </div>
+            </div>
+            <hr className="mt-6" />
+            <div className="my-3 flex justify-between">
+              {mergedData && activeTab > 1 && (
+                <>
+                  <div className="capitalize text-md">Room Type</div>
+                  <div className="capitalize text-md">Number of Rooms</div>
+                </>
+              )}
+            </div>
+            {Array.isArray(mergedData?.roomDetails) &&
+              mergedData.roomDetails.map((room) => (
+                <div className="flex justify-between mb-1" key={room.roomType}>
+                  <div className="capitalize text-sm">{room.roomType}</div>
+                  <div className="capitalize text-sm">
+                    {room.roomTypeNumber}
+                  </div>
+                </div>
+              ))}
+            <hr className="my-2" />
+            <div className="flex justify-between mb-1">
+              <div className="capitalize text-sm">Total Rooms</div>
+              <div className="capitalize text-sm">
+                {Array.isArray(mergedData?.roomDetails)
+                  ? mergedData.roomDetails.reduce(
+                      (total, room) =>
+                        total + parseInt(room.roomTypeNumber, 10),
+                      0
+                    )
+                  : 0}
               </div>
             </div>
           </CardContent>

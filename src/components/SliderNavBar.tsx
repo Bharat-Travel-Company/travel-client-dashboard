@@ -34,7 +34,7 @@ export const SliderNavBar = ({
           </Button>
         ))}
       </div>
-      <p>{tabItems[activeTab].label}</p>
+      <p className="text-sm my-2 text-gray-700 font-normal">{tabItems[activeTab].subheading}</p>
     </div>
   );
 };
