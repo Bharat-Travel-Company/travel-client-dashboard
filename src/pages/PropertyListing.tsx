@@ -184,28 +184,69 @@ const PropertyListing = () => {
       setActiveTab((prevTab) => prevTab + 1);
     } else {
       try {
-        
-        console.log("Form submitted", mergedData);
+        // Safely map mergedData to the desired format with fallback values
+        const formattedData = {
+          Property_type: mergedData.propertyType ?? "", // Fallback to an empty string if undefined
+          Property_name: mergedData.propertyName ?? "",
+          Property_address: {
+            country: mergedData.country ?? "",
+            state: mergedData.state ?? "",
+            city: mergedData.city ?? "",
+            streetAddress: mergedData.streetAddress ?? "",
+          },
+          Property_phone: mergedData.phoneNumber ?? "", // Ensure this is captured from your form
+          email: mergedData.email ?? "", // Ensure email is captured from your form
+          Property_amenities: mergedData.amenities?.amenities ?? [], // Fallback to an empty array if undefined
+          checkInTime: {
+            from: mergedData.amenities?.checkInTime?.from ?? "",
+            to: mergedData.amenities?.checkInTime?.to ?? "",
+          },
+          checkOutTime: {
+            from: mergedData.amenities?.checkOutTime?.from ?? "",
+            to: mergedData.amenities?.checkOutTime?.to ?? "",
+          },
+          property_room: Array.isArray(mergedData.roomDetails)
+            ? mergedData.roomDetails.map((room: any) => ({
+                RoomType: room.roomType ?? "",
+                No_Rooms: room.roomTypeNumber ?? 0,
+                bed_type: room.bedType ?? "",
+                no_beds: room.beds ?? 0,
+                no_guest: room.guests ?? "",
+                room_size: room.size ?? 0,
+                base_price: room.price ?? 0,
+              }))
+            : [],
+          documents: {
+            AadharCard: mergedData.documentDetails?.aadhar_card ?? "",
+            PanCard: mergedData.documentDetails?.pan_card ?? "",
+            FASSiCard: mergedData.documentDetails?.fassi_number ?? "",
+            BankAccount: mergedData.documentDetails?.account_number ?? "",
+          },
+          Property_images: mergedData.propertyImages?.images ?? [], // Fallback to an empty array if undefined
+        };
   
-        
+        console.log("Form submitted", formattedData);
+  
+        // Send formatted data to the API
         const response = await axios.post(
           "https://travel-backend-nwtf.onrender.com/api/v1/property/property-create",
-          mergedData, 
+          formattedData, // Send the correctly formatted data
           {
             headers: {
-              "Content-Type": "application/json", 
+              "Content-Type": "application/json",
             },
           }
         );
   
-        
         console.log("Property submitted successfully:", response.data);
         setIsSubmitted(true);
       } catch (error) {
         console.error("There was an error submitting the property:", error);
         alert("An error occurred while submitting the property. Please try again.");
+      }
     }
-  }};
+  };
+  
 
   const handlePrevious = () => {
     if (activeTab > 0) {
